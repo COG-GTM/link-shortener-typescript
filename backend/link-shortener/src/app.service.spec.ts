@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppService } from './app.service';
-import { AppRepositoryTag } from './app.repository';
-import { AppRepositoryHashmap } from './app.repository.hashmap';
+import { AppRepositoryTag, AppRepositoryHashmap } from './repository';
+import { HashGeneratorTag, DefaultHashGenerator } from './shortener';
 import { mergeMap, tap } from 'rxjs';
 
 describe('AppService', () => {
@@ -11,6 +11,7 @@ describe('AppService', () => {
     const app: TestingModule = await Test.createTestingModule({
       providers: [
         { provide: AppRepositoryTag, useClass: AppRepositoryHashmap },
+        { provide: HashGeneratorTag, useClass: DefaultHashGenerator },
         AppService,
       ],
     }).compile();

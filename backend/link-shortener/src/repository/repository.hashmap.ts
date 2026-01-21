@@ -1,4 +1,4 @@
-import { AppRepository } from './app.repository';
+import { AppRepository } from './repository.interface';
 import { Observable, of } from 'rxjs';
 
 export class AppRepositoryHashmap implements AppRepository {
