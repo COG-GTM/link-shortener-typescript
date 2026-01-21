@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { tap } from 'rxjs';
-import { AppRepositoryTag } from './app.repository';
-import { AppRepositoryHashmap } from './app.repository.hashmap';
+import { AppRepositoryTag, AppRepositoryHashmap } from './repository';
+import { HashGeneratorTag, DefaultHashGenerator } from './shortener';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -14,6 +14,7 @@ describe('AppController', () => {
       providers: [
         AppService,
         { provide: AppRepositoryTag, useClass: AppRepositoryHashmap },
+        { provide: HashGeneratorTag, useClass: DefaultHashGenerator },
       ],
     }).compile();
 
