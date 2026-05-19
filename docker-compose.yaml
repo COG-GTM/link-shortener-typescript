@@ -8,15 +8,13 @@ services:
       - urlnet
   dev:
     build:
-      context: ./backend/link-shortener
+      context: ./backend/link-shortener-java
       dockerfile: Dockerfile
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
     ports:
       - '3000:3000'
-    volumes:
-      - './backend/link-shortener:/app'
     depends_on:
       - redis
     networks:
