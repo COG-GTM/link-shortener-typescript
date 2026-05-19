@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -60,6 +60,15 @@ class AppControllerTest {
         when(appService.retrieve("abc123")).thenReturn("https://aerabi.com");
         mockMvc.perform(get("/abc123"))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl("https://aerabi.com"));
+                .andExpect(header().string("Location", "https://aerabi.com"));
+    }
+
+    @Test
+    void retrieveUnknownHashReturns404() throws Exception {
+        when(appService.retrieve("unknown")).thenReturn(null);
+        mockMvc.perform(get("/unknown"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Hash not found"))
+                .andExpect(jsonPath("$.code").value(404));
     }
 }

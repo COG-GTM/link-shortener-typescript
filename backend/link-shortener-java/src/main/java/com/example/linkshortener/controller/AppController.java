@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.linkshortener.service.AppService;
 
@@ -39,10 +38,14 @@ public class AppController {
     }
 
     @GetMapping("/{hash}")
-    public RedirectView retrieveAndRedirect(@PathVariable String hash) {
+    public ResponseEntity<?> retrieveAndRedirect(@PathVariable String hash) {
         String url = appService.retrieve(hash);
-        RedirectView redirectView = new RedirectView(url);
-        redirectView.setStatusCode(HttpStatus.FOUND);
-        return redirectView;
+        if (url == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Hash not found", "code", 404));
+        }
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("Location", url)
+                .build();
     }
 }

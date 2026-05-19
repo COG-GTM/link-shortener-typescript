@@ -18,7 +18,7 @@ public class AppService {
     }
 
     public String shorten(String url) {
-        String hash = Long.toString(Math.abs(new java.util.Random().nextLong()), 36).substring(0, 6);
+        String hash = Long.toUnsignedString(new java.util.Random().nextLong() >>> 1 | 0x1000000000L, 36).substring(0, 6);
         appRepository.put(hash, url);
         return hash;
     }
