@@ -14,7 +14,7 @@ export function normalizeUrl(url: string): string {
 }
 
 export function isValidAlias(alias: string): boolean {
-  return ALIAS_PATTERN.test(alias);
+  return typeof alias === 'string' && ALIAS_PATTERN.test(alias);
 }
 
 export function isValidUrl(url: string): boolean {

@@ -27,6 +27,13 @@ describe('isValidAlias', () => {
       expect(isValidAlias(alias)).toBe(false);
     },
   );
+
+  it.each([12345, null, ['my-link']])(
+    'should reject the non-string %p',
+    (alias) => {
+      expect(isValidAlias(alias as unknown as string)).toBe(false);
+    },
+  );
 });
 
 describe('isValidUrl', () => {
