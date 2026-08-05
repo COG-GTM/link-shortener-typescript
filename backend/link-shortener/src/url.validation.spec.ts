@@ -19,10 +19,15 @@ describe('isValidUrl', () => {
     expect(isValidUrl(url)).toBe(true);
   });
 
-  it.each(['', '   ', 'ftp://aerabi.com', 'javascript:alert(1)', 'https://'])(
-    'should reject %s',
-    (url) => {
-      expect(isValidUrl(url)).toBe(false);
-    },
-  );
+  it.each([
+    '',
+    '   ',
+    'ftp://aerabi.com',
+    'javascript:alert(1)',
+    'mailto:a@b.com',
+    'data:1234',
+    'https://',
+  ])('should reject %s', (url) => {
+    expect(isValidUrl(url)).toBe(false);
+  });
 });

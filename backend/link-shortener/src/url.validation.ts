@@ -1,10 +1,9 @@
 const ALLOWED_PROTOCOLS = ['http:', 'https:'];
+const SCHEME_PATTERN = /^[a-zA-Z][a-zA-Z0-9+.-]*:/;
 
 export function normalizeUrl(url: string): string {
   const trimmed = url.trim();
-  return /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(trimmed)
-    ? trimmed
-    : `https://${trimmed}`;
+  return SCHEME_PATTERN.test(trimmed) ? trimmed : `https://${trimmed}`;
 }
 
 export function isValidUrl(url: string): boolean {

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { AppRepository, AppRepositoryTag } from './app.repository';
+import { normalizeUrl } from './url.validation';
 
 @Injectable()
 export class AppService {
@@ -14,7 +15,9 @@ export class AppService {
 
   shorten(url: string): Observable<string> {
     const hash = Math.random().toString(36).slice(7);
-    return this.appRepository.put(hash, url).pipe(map(() => hash));
+    return this.appRepository
+      .put(hash, normalizeUrl(url))
+      .pipe(map(() => hash));
   }
 
   retrieve(hash: string): Observable<string> {
