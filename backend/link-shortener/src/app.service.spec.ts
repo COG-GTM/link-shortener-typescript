@@ -20,7 +20,7 @@ describe('AppService', () => {
 
   describe('retrieve', () => {
     it('should retrieve the saved URL', (done) => {
-      const url = 'aerabi.com';
+      const url = 'https://aerabi.com';
       appService
         .shorten(url)
         .pipe(mergeMap((hash) => appService.retrieve(hash)))
