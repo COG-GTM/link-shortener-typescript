@@ -2,7 +2,7 @@ const ALLOWED_PROTOCOLS = ['http:', 'https:'];
 const SCHEME_PATTERN = /^([a-zA-Z][a-zA-Z0-9+.-]*):(\/\/)?/;
 
 function isHostLike(candidate: string): boolean {
-  return candidate.includes('.') || candidate === 'localhost';
+  return candidate.includes('.') || candidate.toLowerCase() === 'localhost';
 }
 
 export function normalizeUrl(url: string): string {

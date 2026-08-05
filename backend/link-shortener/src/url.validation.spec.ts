@@ -22,6 +22,7 @@ describe('isValidUrl', () => {
     'https://aerabi.com/path?q=1',
     'http://localhost:3000',
     'localhost:3000',
+    'LOCALHOST:3000',
     'aerabi.com:8080/path',
   ])('should accept %s', (url) => {
     expect(isValidUrl(url)).toBe(true);
