@@ -34,5 +34,12 @@ describe('AppController', () => {
         .pipe(tap((hash) => expect(hash).toBeTruthy()))
         .subscribe({ complete: done });
     });
+
+    it('should reject an empty alias instead of falling back to a random hash', (done) => {
+      appController
+        .shorten('https://aerabi.com', '')
+        .pipe(tap((response) => expect(response).toHaveProperty('code', 400)))
+        .subscribe({ complete: done });
+    });
   });
 });
