@@ -45,9 +45,9 @@ export class AppService {
       .get(hash)
       .pipe(
         mergeMap((existing) =>
-          existing
-            ? of(false)
-            : this.appRepository.put(hash, url).pipe(map(() => true)),
+          existing == null
+            ? this.appRepository.put(hash, url).pipe(map(() => true))
+            : of(false),
         ),
       );
   }
