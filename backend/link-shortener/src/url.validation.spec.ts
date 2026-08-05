@@ -8,6 +8,12 @@ describe('normalizeUrl', () => {
   it('should keep an existing protocol', () => {
     expect(normalizeUrl(' http://aerabi.com ')).toEqual('http://aerabi.com');
   });
+
+  it('should treat a schemeless host:port as a host', () => {
+    expect(normalizeUrl('aerabi.com:8080/path')).toEqual(
+      'https://aerabi.com:8080/path',
+    );
+  });
 });
 
 describe('isValidUrl', () => {
@@ -15,6 +21,8 @@ describe('isValidUrl', () => {
     'aerabi.com',
     'https://aerabi.com/path?q=1',
     'http://localhost:3000',
+    'localhost:3000',
+    'aerabi.com:8080/path',
   ])('should accept %s', (url) => {
     expect(isValidUrl(url)).toBe(true);
   });
@@ -25,7 +33,7 @@ describe('isValidUrl', () => {
     'ftp://aerabi.com',
     'javascript:alert(1)',
     'mailto:a@b.com',
-    'data:1234',
+    'data:text/html,<script>alert(1)</script>',
     'https://',
   ])('should reject %s', (url) => {
     expect(isValidUrl(url)).toBe(false);

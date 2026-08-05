@@ -1,5 +1,5 @@
 const ALLOWED_PROTOCOLS = ['http:', 'https:'];
-const SCHEME_PATTERN = /^[a-zA-Z][a-zA-Z0-9+.-]*:/;
+const SCHEME_PATTERN = /^[a-zA-Z][a-zA-Z0-9+.-]*:(?!\d)/;
 
 export function normalizeUrl(url: string): string {
   const trimmed = url.trim();
