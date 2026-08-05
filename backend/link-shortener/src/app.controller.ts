@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Redirect } from '@nestjs/common';
 import { AppService } from './app.service';
 import { map, Observable, of } from 'rxjs';
+import { isValidUrl } from './url.validation';
 
 interface ShortenResponse {
   hash: string;
@@ -27,6 +28,12 @@ export class AppController {
     if (!url) {
       return of({
         error: `No url provided. Please provide in the body. E.g. {'url':'https://google.com'}`,
+        code: 400,
+      });
+    }
+    if (!isValidUrl(url)) {
+      return of({
+        error: `Invalid url provided: '${url}'. Only http and https urls are supported.`,
         code: 400,
       });
     }
