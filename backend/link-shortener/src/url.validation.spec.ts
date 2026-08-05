@@ -32,6 +32,7 @@ describe('isValidUrl', () => {
     '   ',
     'ftp://aerabi.com',
     'javascript:alert(1)',
+    'javascript:12345',
     'mailto:a@b.com',
     'data:text/html,<script>alert(1)</script>',
     'https://',
