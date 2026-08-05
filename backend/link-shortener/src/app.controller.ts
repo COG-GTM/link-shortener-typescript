@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Redirect } from '@nestjs/common';
 import { AppService } from './app.service';
 import { map, Observable, of } from 'rxjs';
-import { isValidUrl } from './url.validation';
+import { isValidAlias, isValidUrl } from './url.validation';
 
 interface ShortenResponse {
   hash: string;
@@ -24,6 +24,7 @@ export class AppController {
   @Post('shorten')
   shorten(
     @Body('url') url: string,
+    @Body('alias') alias?: string,
   ): Observable<ShortenResponse | ErrorResponse> {
     if (!url) {
       return of({
@@ -37,7 +38,13 @@ export class AppController {
         code: 400,
       });
     }
-    return this.appService.shorten(url).pipe(map((hash) => ({ hash })));
+    if (alias !== undefined && !isValidAlias(alias)) {
+      return of({
+        error: `Invalid alias provided: '${alias}'. Use 3-32 letters, digits, hyphens or underscores.`,
+        code: 400,
+      });
+    }
+    return this.appService.shorten(url, alias).pipe(map((hash) => ({ hash })));
   }
 
   @Get(':hash')

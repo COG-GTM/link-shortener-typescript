@@ -1,4 +1,4 @@
-import { isValidUrl, normalizeUrl } from './url.validation';
+import { isValidAlias, isValidUrl, normalizeUrl } from './url.validation';
 
 describe('normalizeUrl', () => {
   it('should prepend https when no protocol is given', () => {
@@ -14,6 +14,26 @@ describe('normalizeUrl', () => {
       'https://aerabi.com:8080/path',
     );
   });
+});
+
+describe('isValidAlias', () => {
+  it.each(['my-link', 'my_link_2', 'abc'])('should accept %s', (alias) => {
+    expect(isValidAlias(alias)).toBe(true);
+  });
+
+  it.each(['ab', 'my link', 'my/link', 'a'.repeat(33)])(
+    'should reject %s',
+    (alias) => {
+      expect(isValidAlias(alias)).toBe(false);
+    },
+  );
+
+  it.each([12345, null, ['my-link']])(
+    'should reject the non-string %p',
+    (alias) => {
+      expect(isValidAlias(alias as unknown as string)).toBe(false);
+    },
+  );
 });
 
 describe('isValidUrl', () => {
