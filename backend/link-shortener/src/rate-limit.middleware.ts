@@ -4,6 +4,12 @@ import { RateLimitConfig, RateLimitConfigTag } from './config';
 import { RateLimiter } from './rate-limiter';
 
 export const HEALTH_PATH = '/health';
+const HEALTH_METHODS = new Set(['GET', 'HEAD']);
+
+function isHealthCheck(req: Request): boolean {
+  const path = req.originalUrl.split('?')[0].replace(/\/+$/, '');
+  return HEALTH_METHODS.has(req.method) && path === HEALTH_PATH;
+}
 
 export function extractApiKey(req: Request): string | undefined {
   const headerKey = req.header('x-api-key');
@@ -27,11 +33,13 @@ export class RateLimitMiddleware implements NestMiddleware {
   }
 
   use(req: Request, res: Response, next: NextFunction): void {
-    if (req.originalUrl.split('?')[0] === HEALTH_PATH) {
+    if (isHealthCheck(req)) {
       return next();
     }
 
-    const apiKey = extractApiKey(req);
+    const presented = extractApiKey(req);
+    const apiKey =
+      presented && this.config.apiKeys.has(presented) ? presented : undefined;
     const key = apiKey ? `key:${apiKey}` : `ip:${req.ip}`;
     const limit = apiKey
       ? this.config.authenticatedLimit

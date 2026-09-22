@@ -16,7 +16,12 @@ describe('Rate limiting (e2e)', () => {
       .overrideProvider(AppRepositoryTag)
       .useClass(AppRepositoryHashmap)
       .overrideProvider(RateLimitConfigTag)
-      .useValue({ windowMs: 60_000, anonymousLimit: 2, authenticatedLimit: 4 })
+      .useValue({
+        windowMs: 60_000,
+        anonymousLimit: 2,
+        authenticatedLimit: 4,
+        apiKeys: new Set(['abc', 'other']),
+      })
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -60,6 +65,14 @@ describe('Rate limiting (e2e)', () => {
     await request(server).get('/').expect(200);
   });
 
+  it('counts unknown API keys against the client IP limit', async () => {
+    const server = app.getHttpServer();
+    await request(server).get('/').set('X-Api-Key', 'bogus-1').expect(200);
+    await request(server).get('/').set('X-Api-Key', 'bogus-2').expect(200);
+    await request(server).get('/').set('X-Api-Key', 'bogus-3').expect(429);
+    await request(server).get('/').expect(429);
+  });
+
   it('covers POST /shorten and redirects', async () => {
     const server = app.getHttpServer();
     const first = await request(server)
@@ -77,5 +90,15 @@ describe('Rate limiting (e2e)', () => {
       expect(res.body).toEqual({ status: 'ok' });
       expect(res.headers['x-ratelimit-limit']).toBeUndefined();
     }
+    const trailing = await request(server).get('/health/').expect(200);
+    expect(trailing.headers['x-ratelimit-limit']).toBeUndefined();
+    await request(server).head('/health').expect(200);
+  });
+
+  it('rate limits non-GET requests to /health', async () => {
+    const server = app.getHttpServer();
+    await request(server).post('/health').expect(404);
+    await request(server).post('/health').expect(404);
+    await request(server).post('/health').expect(429);
   });
 });

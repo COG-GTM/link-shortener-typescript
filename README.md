@@ -26,10 +26,11 @@ The service is configured through environment variables (set in `docker-compose.
 | `REDIS_PORT` | `6379` | Port of the Redis instance. |
 | `RATE_LIMIT_ANON_PER_MINUTE` | `60` | Max requests per minute per client IP for unauthenticated requests. |
 | `RATE_LIMIT_AUTH_PER_MINUTE` | `600` | Max requests per minute per API key for authenticated requests. |
+| `RATE_LIMIT_API_KEYS` | _(empty)_ | Comma-separated list of API keys that qualify for the authenticated limit. |
 
 ### Rate limiting
 
-Every route except `GET /health` is rate limited with a fixed one-minute window. A request is treated as authenticated when it carries an `X-Api-Key` header or an `Authorization: Bearer <key>` header, and is then counted per key; otherwise it is counted per client IP. Each response includes `X-RateLimit-Limit` and `X-RateLimit-Remaining`. When a limit is exceeded the API responds with `429 Too Many Requests`, a `Retry-After` header (seconds), and the body:
+Every route except `GET /health` is rate limited with a fixed one-minute window. A request is treated as authenticated when it carries an `X-Api-Key` header or an `Authorization: Bearer <key>` header whose value is listed in `RATE_LIMIT_API_KEYS`, and is then counted per key; any other request (including one with an unknown key) is counted per client IP. Counters are kept in process memory, so with several replicas each replica enforces the limit independently. Each response includes `X-RateLimit-Limit` and `X-RateLimit-Remaining`. When a limit is exceeded the API responds with `429 Too Many Requests`, a `Retry-After` header (seconds), and the body:
 
 ```json
 {"error": "rate_limited", "retry_after_seconds": 42}

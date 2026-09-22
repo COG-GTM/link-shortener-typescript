@@ -15,6 +15,7 @@ services:
       REDIS_PORT: 6379
       RATE_LIMIT_ANON_PER_MINUTE: 60
       RATE_LIMIT_AUTH_PER_MINUTE: 600
+      RATE_LIMIT_API_KEYS: ''
     ports:
       - '3000:3000'
     volumes:

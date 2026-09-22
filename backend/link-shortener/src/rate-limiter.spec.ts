@@ -66,7 +66,13 @@ describe('loadRateLimitConfig', () => {
       windowMs: 60_000,
       anonymousLimit: 60,
       authenticatedLimit: 600,
+      apiKeys: new Set(),
     });
+  });
+
+  it('parses the API key allowlist', () => {
+    const cfg = loadRateLimitConfig({ RATE_LIMIT_API_KEYS: ' a, b ,,c' });
+    expect([...cfg.apiKeys]).toEqual(['a', 'b', 'c']);
   });
 
   it('reads limits from env vars', () => {
@@ -85,5 +91,15 @@ describe('loadRateLimitConfig', () => {
     });
     expect(cfg.anonymousLimit).toBe(60);
     expect(cfg.authenticatedLimit).toBe(600);
+    expect(
+      loadRateLimitConfig({ RATE_LIMIT_ANON_PER_MINUTE: '10junk' })
+        .anonymousLimit,
+    ).toBe(60);
+    expect(
+      loadRateLimitConfig({ RATE_LIMIT_ANON_PER_MINUTE: '1.5' }).anonymousLimit,
+    ).toBe(60);
+    expect(
+      loadRateLimitConfig({ RATE_LIMIT_ANON_PER_MINUTE: '' }).anonymousLimit,
+    ).toBe(60);
   });
 });
