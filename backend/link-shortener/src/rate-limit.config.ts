@@ -9,7 +9,7 @@ export const DEFAULT_AUTHENTICATED_PER_MINUTE = 600;
 export const RateLimitConfigTag = 'RateLimitConfig';
 
 function parsePositiveInt(value: string | undefined, fallback: number): number {
-  if (!value) {
+  if (!value || !/^[0-9]+$/.test(value)) {
     return fallback;
   }
   const parsed = Number(value);
