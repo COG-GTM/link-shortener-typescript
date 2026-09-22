@@ -21,7 +21,7 @@ describe('loadRateLimitConfig', () => {
     expect(config.authenticatedPerMinute).toBe(42);
   });
 
-  it.each(['abc', '0', '-5', ''])(
+  it.each(['abc', '0', '-5', '', '10oops', '1.5', ' ', '9007199254740993'])(
     'falls back to defaults on invalid value %p',
     (value) => {
       const config = loadRateLimitConfig({
