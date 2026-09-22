@@ -16,6 +16,25 @@ If you're using Docker Desktop on Windows, you can run the Linux version by swit
  docker compose up -d –build
 ```
 
+## Configuration
+
+The service is configured through environment variables (set in `docker-compose.yaml` for the `dev` service):
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `REDIS_HOST` | `redis` | Hostname of the Redis instance. |
+| `REDIS_PORT` | `6379` | Port of the Redis instance. |
+| `RATE_LIMIT_ANON_PER_MINUTE` | `60` | Max requests per minute per client IP for unauthenticated requests. |
+| `RATE_LIMIT_AUTH_PER_MINUTE` | `600` | Max requests per minute per API key for authenticated requests. |
+
+### Rate limiting
+
+Every route except `GET /health` is rate limited with a fixed one-minute window. A request is treated as authenticated when it carries an `X-Api-Key` header or an `Authorization: Bearer <key>` header, and is then counted per key; otherwise it is counted per client IP. Each response includes `X-RateLimit-Limit` and `X-RateLimit-Remaining`. When a limit is exceeded the API responds with `429 Too Many Requests`, a `Retry-After` header (seconds), and the body:
+
+```json
+{"error": "rate_limited", "retry_after_seconds": 42}
+```
+
 ## Shortening the new link
 
 You can use ```curl``` command to shorten the link:

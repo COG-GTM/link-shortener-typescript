@@ -20,6 +20,11 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Get('health')
+  health(): { status: string } {
+    return { status: 'ok' };
+  }
+
   @Post('shorten')
   shorten(
     @Body('url') url: string,
