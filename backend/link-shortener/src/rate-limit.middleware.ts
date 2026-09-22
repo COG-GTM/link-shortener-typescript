@@ -11,14 +11,18 @@ function isHealthCheck(req: Request): boolean {
   return HEALTH_METHODS.has(req.method) && path === HEALTH_PATH;
 }
 
-export function extractApiKey(req: Request): string | undefined {
+export function presentedApiKeys(req: Request): string[] {
+  const keys: string[] = [];
   const headerKey = req.header('x-api-key');
   if (headerKey) {
-    return headerKey;
+    keys.push(headerKey);
   }
   const auth = req.header('authorization');
   const match = auth && /^Bearer\s+(\S+)$/i.exec(auth);
-  return match ? match[1] : undefined;
+  if (match) {
+    keys.push(match[1]);
+  }
+  return keys;
 }
 
 @Injectable()
@@ -37,9 +41,9 @@ export class RateLimitMiddleware implements NestMiddleware {
       return next();
     }
 
-    const presented = extractApiKey(req);
-    const apiKey =
-      presented && this.config.apiKeys.has(presented) ? presented : undefined;
+    const apiKey = presentedApiKeys(req).find((k) =>
+      this.config.apiKeys.has(k),
+    );
     const key = apiKey ? `key:${apiKey}` : `ip:${req.ip}`;
     const limit = apiKey
       ? this.config.authenticatedLimit

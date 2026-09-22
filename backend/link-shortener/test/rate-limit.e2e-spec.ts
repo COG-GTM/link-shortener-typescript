@@ -73,6 +73,18 @@ describe('Rate limiting (e2e)', () => {
     await request(server).get('/').expect(429);
   });
 
+  it('uses an allowed bearer key even when X-Api-Key is unknown', async () => {
+    const server = app.getHttpServer();
+    for (let i = 0; i < 3; i++) {
+      await request(server)
+        .get('/')
+        .set('X-Api-Key', 'bogus')
+        .set('Authorization', 'Bearer abc')
+        .expect(200)
+        .expect('X-RateLimit-Limit', '4');
+    }
+  });
+
   it('covers POST /shorten and redirects', async () => {
     const server = app.getHttpServer();
     const first = await request(server)
