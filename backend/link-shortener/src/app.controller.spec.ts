@@ -26,6 +26,12 @@ describe('AppController', () => {
     });
   });
 
+  describe('health', () => {
+    it('should return status ok', () => {
+      expect(appController.health()).toEqual({ status: 'ok' });
+    });
+  });
+
   describe('shorten', () => {
     it('should return a valid string', (done) => {
       const url = 'aerabi.com';

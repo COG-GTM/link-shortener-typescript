@@ -33,6 +33,11 @@ export class AppController {
     return this.appService.shorten(url).pipe(map((hash) => ({ hash })));
   }
 
+  @Get('health')
+  health(): { status: string } {
+    return { status: 'ok' };
+  }
+
   @Get(':hash')
   @Redirect()
   retrieveAndRedirect(@Param('hash') hash): Observable<{ url: string }> {
